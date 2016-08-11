@@ -2,17 +2,17 @@ const assert = require('assert')
 const http = require('http')
 const kube = require('..')
 
-describe('kube deploy', () => {
+describe('kube deploy', function() {
     let server
 
-    before((done) => {
-        server = http.createServer((req, res) => {
+    before(function(done) {
+        server = http.createServer(function(req, res) {
             if (req.method === 'PATCH' && req.url === '/apis/extensions/v1beta1/namespaces/default/deployments/test-deployment') {
                 var body = ''
-                req.on('data', (chunk) => {
+                req.on('data', function(chunk) {
                     body += chunk.toString()
                 })
-                req.on('end', () => {
+                req.on('end', function() {
                     res.writeHead(200, {'Content-Type': 'application/json'})
                     res.end(JSON.stringify({ok: true, payload: body, headers: req.headers}))
                 })
@@ -24,11 +24,11 @@ describe('kube deploy', () => {
         server.listen(3000, done)
     })
 
-    after((done) => {
+    after(function(done) {
         server.close(done)
     })
 
-    it('should send a patch request with the correct headers and payload', (done) => {
+    it('should send a patch request with the correct headers and payload', function(done) {
         kube.deploy({
             protocol: 'http',
             hostname: 'localhost',
@@ -39,7 +39,7 @@ describe('kube deploy', () => {
             resourceName: 'test-deployment',
             containerName: 'test-container',
             containerImage: 'repo/image:tag'
-        }, (err, json) => {
+        }, function(err, json) {
             assert.ifError(err)
             assert.equal(json.ok, true)
             assert.equal(json.payload, '{"spec":{"template":{"spec":{"containers":[{"name":"test-container","image":"repo/image:tag"}]}}}}')
@@ -49,7 +49,7 @@ describe('kube deploy', () => {
         })
     })
 
-    it('should handle http errors', (done) => {
+    it('should handle http errors', function(done) {
         kube.deploy({
             protocol: 'http',
             hostname: 'localhost',
@@ -59,7 +59,7 @@ describe('kube deploy', () => {
             resourceName: 'none',
             containerName: 'none',
             containerImage: 'none'
-        }, (err, json) => {
+        }, function(err, json) {
             assert.ok(err)
             assert.equal(err.message, 'unexpected response code: 404')
             assert.equal(json.ok, false)
@@ -68,7 +68,7 @@ describe('kube deploy', () => {
         })
     })
 
-    it('should use sane defaults', (done) => {
+    it('should use sane defaults', function(done) {
         kube.deploy({
             protocol: 'http',
             hostname: 'localhost',
@@ -77,30 +77,30 @@ describe('kube deploy', () => {
             resourceName: 'none',
             containerName: 'none',
             containerImage: 'none'
-        }, (err, json) => {
+        }, function(err, json) {
             assert.ok(err)
             assert.equal(err.message, 'connect ECONNREFUSED 127.0.0.1:80')
             done()
         })
     })
 
-    it('should handle invalid http options', (done) => {
-        kube.deploy({protocol: 'invalid_protocol'}, (err, json) => {
+    it('should handle invalid http options', function(done) {
+        kube.deploy({protocol: 'invalid_protocol'}, function(err, json) {
             assert.ok(err)
             assert.equal(err.message, 'unknown protocol: invalid_protocol')
             done()
         })
     })
 
-    it('should handle invalid kubernetes options', (done) => {
-        kube.deploy({resourceType: 'unknown'}, (err, json) => {
+    it('should handle invalid kubernetes options', function(done) {
+        kube.deploy({resourceType: 'unknown'}, function(err, json) {
             assert.ok(err)
             assert.equal(err.message, 'unknown resource type: unknown')
             done()
         })
     })
 
-    it('should handle network errors', (done) => {
+    it('should handle network errors', function(done) {
         kube.deploy({
             protocol: 'http',
             hostname: 'nohost',
@@ -109,7 +109,7 @@ describe('kube deploy', () => {
             resourceName: 'none',
             containerName: 'none',
             containerImage: 'none'
-        }, (err, json) => {
+        }, function(err, json) {
             assert.ok(err)
             assert.equal(err.message, 'getaddrinfo ENOTFOUND nohost nohost:80')
             done()

@@ -30,7 +30,7 @@ function perpareOptions(options) {
 
 module.exports = {
     resourceTypes: resourceTypes,
-    deploy: (options, cb) => {
+    deploy: function(options, cb) {
         var _options = perpareOptions(options)
         if (_options instanceof Error) {
             cb(_options)
