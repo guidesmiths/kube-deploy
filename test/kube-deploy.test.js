@@ -3,7 +3,7 @@ const http = require('http')
 const kube = require('..')
 
 describe('kube deploy', function() {
-    let server
+    var server
 
     before(function(done) {
         server = http.createServer(function(req, res) {
