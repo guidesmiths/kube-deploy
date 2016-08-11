@@ -7,7 +7,7 @@ describe('kube deploy', () => {
 
     before((done) => {
         server = http.createServer((req, res) => {
-            if (req.method === 'PATCH' && req.url === '/apis/extensions/v1beta1/namespaces/default/deployment/test-deployment') {
+            if (req.method === 'PATCH' && req.url === '/apis/extensions/v1beta1/namespaces/default/deployments/test-deployment') {
                 var body = ''
                 req.on('data', (chunk) => {
                     body += chunk.toString()

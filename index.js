@@ -6,12 +6,12 @@ var difference = require('lodash.difference');
 
 const resourceTypes = {
     deployment: {
-        apiEndpoint: "apis/extensions/v1beta1"
+        apiEndpoint: 'apis/extensions/v1beta1'
     }
 }
 
 function formatUrl(options) {
-    return format('%s://%s:%d/%s/namespaces/%s/%s/%s', options.protocol, options.hostname, options.port, resourceTypes[options.resourceType].apiEndpoint, options.namespace, options.resourceType, options.resourceName)
+    return format('%s://%s:%d/%s/namespaces/%s/%ss/%s', options.protocol, options.hostname, options.port, resourceTypes[options.resourceType].apiEndpoint, options.namespace, options.resourceType, options.resourceName)
 }
 
 function jsonPayload(options) {
@@ -42,7 +42,8 @@ module.exports = {
             url: formatUrl(_options),
             method: 'PATCH',
             json: jsonPayload(_options),
-            headers: _headers
+            headers: _headers,
+            strictSSL: !options.insecureHttps
         }, function(err, res, body) {
             if (err) return cb(err)
             if (res.statusCode >= 400) return cb(new Error(format('unexpected response code: %d', res.statusCode)), body)
