@@ -79,7 +79,7 @@ describe('kube deploy', function() {
             containerImage: 'none'
         }, function(err, json) {
             assert.ok(err)
-            assert.equal(err.message, 'connect ECONNREFUSED 127.0.0.1:80')
+            assert.ok(/ECONNREFUSED/.test(err.message))
             done()
         })
     })
@@ -111,7 +111,7 @@ describe('kube deploy', function() {
             containerImage: 'none'
         }, function(err, json) {
             assert.ok(err)
-            assert.equal(err.message, 'getaddrinfo ENOTFOUND nohost nohost:80')
+            assert.ok(/ENOTFOUND/.test(err.message))
             done()
         })
     })
